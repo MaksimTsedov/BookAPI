@@ -3,19 +3,15 @@
     using System.ComponentModel.DataAnnotations;
     public class Book
     {
-        private static object sync = new object();
         private static int _globalCount;
 
         public Book(string title, string author, int numberOfPages, int year)
         {
-            Title = title;
-            Author = author;
-            NumberOfPages = numberOfPages;
-            Year = year;
-            lock (sync)
-            {
-                Id = ++_globalCount;
-            }
+            this.Title = title;
+            this.Author = author;
+            this.NumberOfPages = numberOfPages;
+            this.Year = year;
+            this.Id = ++_globalCount;
         }
 
         [Required]

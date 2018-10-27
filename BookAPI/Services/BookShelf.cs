@@ -46,6 +46,7 @@
             Book bookToUpdate = _books.Find((oldbook) => oldbook.Id == id);
             if (book != null)
             {
+
                 book.Id = id;
                 int index = _books.IndexOf(bookToUpdate);
                 _books[index] = book;

@@ -18,7 +18,7 @@
         }
 
         [HttpPost]
-        public ActionResult<Book> PostBook(Book book)
+        public IActionResult AddBook(Book book)
         {
             if (!ModelState.IsValid)
             {
@@ -30,7 +30,7 @@
         }
 
         [HttpPut("{id}")]
-        public ActionResult<Book> PutBook(long id, Book item)
+        public IActionResult UpdateBook(long id, Book item)
         {
             if (!ModelState.IsValid)
             {
@@ -42,6 +42,7 @@
             {
                 return NotFound();
             }
+
             return Ok(updatedBook);
         }
 
