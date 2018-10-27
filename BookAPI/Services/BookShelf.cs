@@ -42,18 +42,16 @@
 
         public Book Update(long id, Book book)
         {
-            Book result = null;
             Book bookToUpdate = _books.Find((oldbook) => oldbook.Id == id);
             if (book != null)
             {
-
-                book.Id = id;
-                int index = _books.IndexOf(bookToUpdate);
-                _books[index] = book;
-                result = _books[index];
+                bookToUpdate.Title = book.Title;
+                bookToUpdate.Author = book.Author;
+                bookToUpdate.NumberOfPages = book.NumberOfPages;
+                bookToUpdate.Year = book.Year;
             }
 
-            return result;
+            return bookToUpdate;
         }
     }
 }
