@@ -73,7 +73,7 @@
         [HttpGet("{id}")]
         public IActionResult GetById(long id)
         {
-            Book bookToFind = _books.GetAll().ToList().Find((book) => book.Id == id);
+            Book bookToFind = _books.GetBook(id);
             if (bookToFind == null)
             {
                 return NotFound();
