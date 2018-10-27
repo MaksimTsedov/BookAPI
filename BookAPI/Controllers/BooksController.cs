@@ -29,7 +29,7 @@
             return Created("books", book);
         }
 
-        [HttpPut]
+        [HttpPut("{id}")]
         public ActionResult<Book> PutBook(long id, Book item)
         {
             if (!ModelState.IsValid)
@@ -45,7 +45,7 @@
             return Ok(updatedBook);
         }
 
-        [HttpDelete]
+        [HttpDelete("{id}")]
         public IActionResult DeleteBook(long id)
         {
             if (!ModelState.IsValid)
