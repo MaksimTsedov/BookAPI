@@ -12,7 +12,7 @@
         /// Gets all books.
         /// </summary>
         /// <returns>Enumeration of all books</returns>
-        IEnumerable<Book> GetAll();
+        IEnumerable<Book> GetAllBooks();
 
         /// <summary>
         /// Gets the book by id.
@@ -25,7 +25,7 @@
         /// Creates the specified book.
         /// </summary>
         /// <param name="book">The book.</param>
-        void Create(Book book);
+        Book CreateBook(Book book);
 
         /// <summary>
         /// Updates a book by its id.
@@ -33,12 +33,12 @@
         /// <param name="id">The identifier.</param>
         /// <param name="book">The book.</param>
         /// <returns>Updated book.</returns>
-        Book Update(long id, Book book);
+        Book UpdateBook(long id, Book book);
 
         /// <summary>
         /// Deletes a book by its id.
         /// </summary>
         /// <param name="id">The identifier.</param>
-        void Delete(long id);
+        void DeleteBook(long id);
     }
 }
