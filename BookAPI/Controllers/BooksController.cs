@@ -6,17 +6,33 @@
     using BookAPI.Models;
     using Microsoft.AspNetCore.Mvc;
 
+    /// <summary>
+    /// Controller for realization of CRUD operations about books
+    /// </summary>
+    /// <seealso cref="Microsoft.AspNetCore.Mvc.ControllerBase" />
     [Route("api/[controller]")]
     [ApiController]
     public class BooksController : ControllerBase
     {
+        /// <summary>
+        /// The interface reference for DI inverse
+        /// </summary>
         private readonly IBookShelf _books;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="BooksController"/> class.
+        /// </summary>
+        /// <param name="books">The instance of books.</param>
         public BooksController(IBookShelf books)
         {
             _books = books;
         }
 
+        /// <summary>
+        /// Creates and adds the book.
+        /// </summary>
+        /// <param name="book">The book.</param>
+        /// <returns>HTTP result of operation execution.</returns>
         [HttpPost]
         public IActionResult AddBook(Book book)
         {
@@ -29,6 +45,12 @@
             return Created("books", book);
         }
 
+        /// <summary>
+        /// Updates the book.
+        /// </summary>
+        /// <param name="id">The identifier.</param>
+        /// <param name="item">The book.</param>
+        /// <returns>HTTP result of operation execution.</returns>
         [HttpPut("{id}")]
         public IActionResult UpdateBook(long id, Book item)
         {
@@ -46,6 +68,11 @@
             return Ok(updatedBook);
         }
 
+        /// <summary>
+        /// Deletes the book.
+        /// </summary>
+        /// <param name="id">The identifier of a book.</param>
+        /// <returns>HTTP result of operation execution.</returns>
         [HttpDelete("{id}")]
         public IActionResult DeleteBook(long id)
         {
@@ -58,6 +85,10 @@
             return Ok();
         }
 
+        /// <summary>
+        /// Gets all books.
+        /// </summary>
+        /// <returns>HTTP result of operation execution.</returns>
         [HttpGet]
         public IActionResult GetAll()
         {
@@ -70,6 +101,11 @@
             return Ok(booklist);
         }
 
+        /// <summary>
+        /// Gets a book the by identifier.
+        /// </summary>
+        /// <param name="id">The identifier.</param>
+        /// <returns>HTTP result of operation execution.</returns>
         [HttpGet("{id}")]
         public IActionResult GetById(long id)
         {
