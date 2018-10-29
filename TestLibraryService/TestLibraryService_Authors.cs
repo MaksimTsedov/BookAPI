@@ -4,8 +4,8 @@
     using System.Collections.Generic;
     using System.Linq;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
-    using BookAPI.Services;
-    using BookAPI.Models;
+    using BusinessLogic_BookAPI.Services;
+    using BusinessLogic_BookAPI.Models;
 
     /// <summary>
     /// Test class for CRUD operations for authors
@@ -165,7 +165,7 @@
         /// </summary>
         /// <param name="id">The identifier of a author.</param>
         [TestMethod]
-        [DataRow(2)]
+        [DataRow(3)]
         [DataRow(-11)]
         [DataRow(0)]
         [ExpectedException(typeof(ArgumentNullException))]

@@ -1,18 +1,13 @@
-﻿namespace BookAPI.Services
+﻿namespace BusinessLogic_BookAPI.Services
 {
     using System.Collections.Generic;
-    using BookAPI.Models;
+    using BusinessLogic_BookAPI.Models;
 
     /// <summary>
     /// Authors abstraction
     /// </summary>
     public interface IAuthorService
-    {
-        /// <summary>
-        /// Gets list of authors.
-        /// </summary>
-        /// <returns>Enumeration of all authors.</returns>
-        IEnumerable<Author> GetAllAuthors();
+    {  
 
         /// <summary>
         /// Gets the author.
@@ -22,9 +17,10 @@
         Author GetAuthor(long id);
 
         /// <summary>
-        /// Creates the specified author.
+        /// Creates the author.
         /// </summary>
         /// <param name="author">The author.</param>
+        /// <returns>Created author.</returns>
         Author CreateAuthor(Author author);
 
         /// <summary>

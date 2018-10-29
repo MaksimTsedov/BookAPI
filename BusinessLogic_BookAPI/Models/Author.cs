@@ -1,4 +1,4 @@
-﻿namespace BookAPI.Models
+﻿namespace BusinessLogic_BookAPI.Models
 {
     using System.ComponentModel.DataAnnotations;
 
@@ -35,10 +35,10 @@
         public long Id { get; set; }
 
         /// <summary>
-        /// Gets or sets the title of a book.
+        /// Gets or sets the full name.
         /// </summary>
         /// <value>
-        /// The title.
+        /// The full name.
         /// </value>
         [Required(ErrorMessage = "Author should have his name or alias!")]
         public string FullName { get; set; }

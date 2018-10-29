@@ -1,4 +1,4 @@
-﻿namespace BookAPI.Models
+﻿namespace BusinessLogic_BookAPI.Models
 {
     using System.ComponentModel.DataAnnotations;
 
@@ -19,10 +19,9 @@
         /// <param name="author">The author.</param>
         /// <param name="numberOfPages">The number of pages.</param>
         /// <param name="year">The year.</param>
-        public Book(string title, long? authorid, int numberOfPages, int year)
+        public Book(string title, int numberOfPages, int year)
         {
             this.Title = title;
-            this.AuthorId = authorid;
             this.NumberOfPages = numberOfPages;
             this.Year = year;
             this.Id = ++_globalCount;
@@ -46,14 +45,6 @@
         /// </value>
         [Required(ErrorMessage = "Every book has its own naming!")]
         public string Title { get; set; }
-
-        /// <summary>
-        /// Gets or sets the author of a book.
-        /// </summary>
-        /// <value>
-        /// The author.
-        /// </value>
-        public long? AuthorId { get; set; }
 
         /// <summary>
         /// Gets or sets the number of pages.
@@ -80,7 +71,6 @@
         public void Clone(Book book)
         {
             this.Title = book.Title;
-            this.AuthorId = book.AuthorId;
             this.NumberOfPages = book.NumberOfPages;
             this.Year = book.Year;
         }
@@ -96,7 +86,6 @@
         {
             Book newbook = book as Book;
             if (this.Title == newbook.Title
-             && this.AuthorId == newbook.AuthorId
              && this.NumberOfPages == newbook.NumberOfPages
              && this.Year == newbook.Year)
             {

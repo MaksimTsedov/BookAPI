@@ -1,19 +1,13 @@
-﻿namespace BookAPI.Services
+﻿namespace BusinessLogic_BookAPI.Services
 {
     using System.Collections.Generic;
-    using BookAPI.Models;
+    using BusinessLogic_BookAPI.Models;
 
     /// <summary>
     /// Abstraction of book service to solve the problem of DI
     /// </summary>
     public interface IBookShelf
     {
-        /// <summary>
-        /// Gets all books.
-        /// </summary>
-        /// <returns>Enumeration of all books</returns>
-        IEnumerable<Book> GetAllBooks();
-
         /// <summary>
         /// Gets the book by id.
         /// </summary>
@@ -22,9 +16,10 @@
         Book GetBook(long id);
 
         /// <summary>
-        /// Creates the specified book.
+        /// Creates the book.
         /// </summary>
         /// <param name="book">The book.</param>
+        /// <returns>Created book.</returns>
         Book CreateBook(Book book);
 
         /// <summary>

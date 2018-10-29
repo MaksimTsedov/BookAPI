@@ -2,9 +2,10 @@
 {
     using System.Collections.Generic;
     using System.Linq;
-    using BookAPI.Services;
-    using BookAPI.Models;
+    using BusinessLogic_BookAPI.Services;
+    using BusinessLogic_BookAPI.Models;
     using Microsoft.AspNetCore.Mvc;
+    using System;
 
     /// <summary>
     /// Controller for realization of CRUD operations about books
@@ -104,7 +105,15 @@
                 return BadRequest("Not a valid student id");
             }
 
-            _books.DeleteBook(id);
+            try
+            {
+                _books.DeleteBook(id);
+            }
+            catch (ArgumentNullException)
+            {
+                return NotFound("No book with such Id!");
+            }
+           
             return Ok();
         }
 

@@ -3,7 +3,7 @@
     using Microsoft.AspNetCore.Builder;
     using Microsoft.AspNetCore.Hosting;
     using Microsoft.Extensions.DependencyInjection;
-    using BookAPI.Services;
+    using BusinessLogic_BookAPI.Services;
     using Microsoft.AspNetCore.Mvc;
 
     /// <summary>

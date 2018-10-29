@@ -13,7 +13,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\BookAPI\BookAPI.csproj" />
+    <ProjectReference Include="..\BusinessLogic_BookAPI\BusinessLogic_BookAPI.csproj" />
   </ItemGroup>
 
 </Project>

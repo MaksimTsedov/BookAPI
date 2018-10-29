@@ -2,9 +2,10 @@
 {
     using System.Collections.Generic;
     using System.Linq;
-    using BookAPI.Services;
-    using BookAPI.Models;
+    using BusinessLogic_BookAPI.Services;
+    using BusinessLogic_BookAPI.Models;
     using Microsoft.AspNetCore.Mvc;
+    using System;
 
     /// <summary>
     /// Controller for realization of CRUD operations about authors
@@ -81,7 +82,15 @@
                 return BadRequest("Not a valid author id");
             }
 
-            _authors.DeleteAuthor(id);
+            try
+            {
+                _authors.DeleteAuthor(id);
+            }
+            catch (ArgumentNullException)
+            {
+                return NotFound("No author with such Id!");
+            }
+
             return Ok();
         }
 
