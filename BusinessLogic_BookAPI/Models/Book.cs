@@ -35,7 +35,7 @@
         /// </value>
         [Required(ErrorMessage = "Id is always required!")]
         [Range(1, long.MaxValue, ErrorMessage = "Id should be natural number!")]
-        public long Id { get; set; }
+        public long Id { get; private set; }
 
         /// <summary>
         /// Gets or sets the title of a book.
@@ -44,6 +44,7 @@
         /// The title.
         /// </value>
         [Required(ErrorMessage = "Every book has its own naming!")]
+        [StringLength(100)]
         public string Title { get; set; }
 
         /// <summary>

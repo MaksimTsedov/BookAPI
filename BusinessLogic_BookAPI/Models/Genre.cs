@@ -30,7 +30,7 @@
         /// </value>
         [Required(ErrorMessage = "Id is always required!")]
         [Range(1, long.MaxValue, ErrorMessage = "Id should be natural number!")]
-        public long Id { get; set; }
+        public long Id { get; private set; }
 
         /// <summary>
         /// Gets or sets the naming.
@@ -39,6 +39,7 @@
         /// The naming.
         /// </value>
         [Required(ErrorMessage = "Genre should have his name!")]
+        [StringLength(50)]
         public string Naming { get; set; }
     }
 }

@@ -32,7 +32,7 @@
         /// </value>
         [Required(ErrorMessage = "Id is always required!")]
         [Range(1, long.MaxValue, ErrorMessage = "Id should be natural number!")]
-        public long Id { get; set; }
+        public long Id { get; private set; }
 
         /// <summary>
         /// Gets or sets the full name.
@@ -41,6 +41,7 @@
         /// The full name.
         /// </value>
         [Required(ErrorMessage = "Author should have his name or alias!")]
+        [StringLength(200)]
         public string FullName { get; set; }
 
         /// <summary>
@@ -49,6 +50,7 @@
         /// <value>
         /// The country.
         /// </value>
+        [StringLength(100)]
         public string Country { get; set; }
 
         /// <summary>

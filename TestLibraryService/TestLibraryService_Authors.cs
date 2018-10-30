@@ -6,6 +6,8 @@
     using Microsoft.VisualStudio.TestTools.UnitTesting;
     using BusinessLogic_BookAPI.Services;
     using BusinessLogic_BookAPI.Models;
+    using Moq;
+    using Microsoft.AspNetCore.Mvc;
 
     /// <summary>
     /// Test class for CRUD operations for authors
@@ -16,7 +18,7 @@
         /// <summary>
         /// The library class to test
         /// </summary>
-        private static LibraryService _libraryToTest;
+        private static Mock<IDataProvider> mockLibrary;
 
         /// <summary>
         /// Initializes the library instance with some books and authors.
@@ -25,7 +27,7 @@
         [ClassInitialize]
         public static void Initialize(TestContext context)
         {
-            _libraryToTest = new LibraryService();
+            mockLibrary = new Mock<IDataProvider>();
         }
 
         /// <summary>
@@ -34,32 +36,29 @@
         [TestMethod]
         public void TestGetAuthors()
         {
-            List<Author> expected = new List<Author> {
-                    new Author("Ray Bradbury", "USA"),
-                    new Author("George Orwell", "Great Britain")
-            };
+            mockLibrary.Setup(lib => lib.GetAllAuthors()).Returns(new List<Author> { default(Author) });
+            ILibraryService library = mockLibrary.Object;
 
-            List<Author> actual = _libraryToTest.GetAllAuthors().ToList();
+            var result = library.GetAllAuthors().Count();
 
-            CollectionAssert.AreEqual(actual, expected);
+            Assert.IsTrue(result == 1);
         }
 
         /// <summary>
         /// Tests correct author getting.
         /// </summary>
         /// <param name="id">The identifier.</param>
-        /// <param name="fullname">The fullname.</param>
-        /// <param name="country">The country.</param>
         [TestMethod]
-        [DataRow(1, "Ray Bradbury", "USA")]
-        [DataRow(2, "George Orwell", "Great Britain")]
-        public void TestGetAuthor_Correct(long id, string fullname, string country)
+        [DataRow(1)]
+        [DataRow(2)]
+        public void TestGetAuthor_Correct(long id)
         {
-            Author expected = new Author(fullname, country);
+            mockLibrary.Setup(lib => lib.GetAuthor(It.Is<long>((mockId)=>mockId==id))).Returns<Author>(author => author);
+            ILibraryService library = mockLibrary.Object;
 
-            Author actual = _libraryToTest.GetAuthor(id);
+            var result = library.GetAuthor(id);
 
-            Assert.AreEqual(actual, expected);
+            Assert.IsNotNull(result);
         }
 
         /// <summary>
@@ -67,14 +66,17 @@
         /// </summary>
         /// <param name="id">The identifier of a author.</param>
         [TestMethod]
-        [DataRow(3)]
+        [DataRow(7)]
         [DataRow(-1)]
         [DataRow(0)]
         public void TestGetAuthor_InCorrect(long id)
         {
-            Author actual = _libraryToTest.GetAuthor(id);
+            mockLibrary.Setup(lib => lib.GetAuthor(id)).Returns<Author>(author => author);
+            ILibraryService library = mockLibrary.Object;
 
-            Assert.AreEqual(actual, null);
+            var result = library.GetAuthor(id);
+
+            Assert.IsNull(result);
         }
 
         /// <summary>
@@ -83,11 +85,12 @@
         [TestMethod]
         public void TestGetAuthorBooks_FirstAuthor()
         {
-            Book expected = _libraryToTest.GetBook(1);
-            Book actual = _libraryToTest.GetAuthorBooks(1).ToList().First();
-            
+            mockLibrary.Setup(lib => lib.GetAuthorBooks(It.IsAny<long>())).Returns(new List<Book> { default(Book) });
+            ILibraryService library = mockLibrary.Object;
 
-            Assert.AreEqual(actual, expected);
+            var result = library.GetAuthorBooks(1).Count();
+
+            Assert.IsTrue(result == 1);
         }
 
         /// <summary>
@@ -97,16 +100,34 @@
         /// <param name="country">The country.</param>
         [TestMethod]
         [DataRow("Testauthor", "Lemuria")]
+        [DataRow("Hello", "Ukraine")]
         public void TestAddAuthor_Correct(string fullname, string country)
         {
-            Author expected = new Author(fullname, country);
+            mockLibrary.Setup(lib => lib.CreateAuthor(new Author(fullname, country))).Returns<Author>(author => author);
+            ILibraryService library = mockLibrary.Object;
 
-            Author actual = _libraryToTest.CreateAuthor(expected);
+            var result = library.GetAllAuthors().Count();
 
-            Assert.AreEqual(actual, expected);
+            Assert.IsTrue(result == 1);
         }
 
         /// <summary>
+        /// Tests correct the adding author.
+        /// </summary>
+        /// <param name="fullname">The fullname.</param>
+        /// <param name="country">The country.</param>
+        [TestMethod]
+        public void TestAddAuthor_Incorrect()
+        {
+            mockLibrary.Setup(lib => lib.CreateAuthor(new Author(string.Empty, string.Empty))).Returns<Author>(author => author);
+            ILibraryService library = mockLibrary.Object;
+
+            var result = library.GetAllAuthors().Count();
+
+            Assert.IsTrue(result == 0);
+        }
+
+        /*/// <summary>
         /// Tests the update of a author is correct.
         /// </summary>
         /// <param name="id">The identifier.</param>
@@ -118,7 +139,7 @@
         {
             Author expected = new Author(fullname, country);
 
-            Author actual = _libraryToTest.UpdateAuthor(id, new Author(fullname, country));
+            Author actual = mockLibrary.UpdateAuthor(id, new Author(fullname, country));
 
             Assert.AreEqual(actual, expected);
         }
@@ -136,7 +157,7 @@
         {
             Author expected = new Author(fullname, country);
 
-            Author actual = _libraryToTest.UpdateAuthor(id, new Author(fullname, country));
+            Author actual = mockLibrary.UpdateAuthor(id, new Author(fullname, country));
 
             Assert.AreEqual(actual, null);
         }
@@ -150,11 +171,11 @@
         [DataRow(1)]
         public void TestDeleteAuthor_Correct(long id)
         {
-            _libraryToTest.DeleteAuthor(id);
+            mockLibrary.DeleteAuthor(id);
 
-            List<Book> books = _libraryToTest.GetAuthorBooks(id).ToList();
+            List<Book> books = mockLibrary.GetAuthorBooks(id).ToList();
 
-            Author actual = _libraryToTest.GetAuthor(id);
+            Author actual = mockLibrary.GetAuthor(id);
 
             Assert.AreEqual(books.Count, 0);
             Assert.AreEqual(actual, null);
@@ -171,7 +192,7 @@
         [ExpectedException(typeof(ArgumentNullException))]
         public void TestDeleteAuthor_InCorrect(long id)
         {
-            _libraryToTest.DeleteAuthor(id);
-        }
+            mockLibrary.DeleteAuthor(id);
+        }*/
     }
 }

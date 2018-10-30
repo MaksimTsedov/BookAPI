@@ -35,7 +35,7 @@
         /// <param name="author">The writer.</param>
         /// <returns>HTTP result of operation execution.</returns>
         [HttpPost]
-        public IActionResult AddBook(Author author)
+        public IActionResult AddAuthor(Author author)
         {
             if (!ModelState.IsValid)
             {
@@ -53,7 +53,7 @@
         /// <param name="item">The author.</param>
         /// <returns>HTTP result of operation execution.</returns>
         [HttpPut("{id}")]
-        public IActionResult UpdateBook(long id, Author item)
+        public IActionResult UpdateAuthor(long id, Author item)
         {
             if (!ModelState.IsValid)
             {

@@ -11,79 +11,48 @@
     /// <seealso cref="BusinessLogic_BookAPI.Services.ILibraryService" />
     public class LibraryService : ILibraryService
     {
+        #region Inirializing
+
         /// <summary>
         /// List of books
         /// </summary>
-        private List<Book> _books;
+        private List<Book> _books = new List<Book>();
 
         /// <summary>
         /// List of authors
         /// </summary>
-        private List<Author> _authors;
+        private List<Author> _authors = new List<Author>();
 
         /// <summary>
         /// List of genres
         /// </summary>
-        private List<Genre> _genres;
-
-        // HACK: Is it appropriate to use such "SortedSet<KeyValuePair<>>" link collection?
+        private List<Genre> _genres = new List<Genre>();
 
         /// <summary>
-        /// List of book-genre link
+        /// Sorted set of book-genre link
         /// </summary>
-        private SortedSet<KeyValuePair<long, long>> _bookGenrePair;
+        private SortedSet<BookGenrePair> _bookGenrePair
+            = new SortedSet<BookGenrePair>();
 
         /// <summary>
-        /// List of book-author pair
+        /// Sorted set of book-author pair
         /// </summary>
-        private SortedSet<KeyValuePair<long, long>> _bookAuthorPair;
+        private SortedSet<BookAuthorPair> _bookAuthorPair
+            = new SortedSet<BookAuthorPair>();
 
         /// <summary>
         /// Initializes a new instance of the <see cref="LibraryService"/> class.
         /// </summary>
-        public LibraryService()
+        public LibraryService(IDataProvider data)
         {
-            _authors = new List<Author>
-            {
-                new Author("Ray Bradbury", "USA"),
-                new Author("George Orwell", "Great Britain"),
-                new Author("Homer", "Ancient Greece")
-            };
-
-            _books = new List<Book>
-            {
-                new Book("451 fahrenheit", 158, 1953),
-                new Book("1984", 328, 1949),
-                new Book("Odyssey", 800, -800),
-                new Book("Dandelion wine", 164, 1957),
-                new Book("Folk tails", 160, 1890)
-            };
-
-            _genres = new List<Genre>
-            {
-                new Genre("Dystopia"),
-                new Genre("Fiction"),
-                new Genre("Epos"),
-                new Genre("Fairy tail")
-            };
-
-            _bookGenrePair = new SortedSet<KeyValuePair<long, long>>
-            {
-                new KeyValuePair<long, long>(1, 1),
-                new KeyValuePair<long, long>(1, 2),
-                new KeyValuePair<long, long>(2, 1),
-                new KeyValuePair<long, long>(3, 3),
-                new KeyValuePair<long, long>(5, 4)
-            };
-
-            _bookAuthorPair = new SortedSet<KeyValuePair<long, long>>
-            {
-                new KeyValuePair<long, long>(1, 1),
-                new KeyValuePair<long, long>(2, 2),
-                new KeyValuePair<long, long>(3, 3),
-                new KeyValuePair<long, long>(4, 1)
-            };
+            _books = data.SetBooks().ToList();
+            _authors = data.SetAuthors().ToList();
+            _genres = data.SetGenres().ToList();
+            _bookAuthorPair = new SortedSet<BookAuthorPair>(data.SetBooksAuthors());
+            _bookGenrePair = new SortedSet<BookGenrePair>(data.SetBooksGenres());
         }
+
+        #endregion
 
         #region Creating
 
@@ -136,10 +105,10 @@
         public bool AddGenreToBook(long book_id, long genre_id)
         {
             bool result = false;
-            Genre genreToFind = _genres.Find((genre) => genre.Id == genre_id);
-            if (GetBook(book_id) != null && genreToFind != null)
+
+            if (GetBook(book_id) != null && _genres.Any((genre) => genre.Id == genre_id))
             {
-                _bookGenrePair.Add(new KeyValuePair<long, long>(book_id, genre_id));
+                _bookGenrePair.Add(new BookGenrePair(book_id, genre_id));
                 result = true;
             }
 
@@ -157,7 +126,7 @@
             bool result = false;
             if (GetBook(book_id) != null && GetAuthor(author_id) != null)
             {
-                _bookAuthorPair.Add(new KeyValuePair<long, long>(book_id, author_id));
+                _bookAuthorPair.Add(new BookAuthorPair(book_id, author_id));
                 result = true;
             }
 
@@ -175,14 +144,14 @@
         /// <exception cref="ArgumentNullException">It is thrown if there is no author with such id.</exception>
         public void DeleteAuthor(long id)
         {
-            Author authorToDelete = _authors.Find((author) => author.Id == id);
+            Author authorToDelete = _authors.First((author) => author.Id == id);
             if (authorToDelete == null)
             {
                 throw new ArgumentNullException();
             }
 
             _authors.Remove(authorToDelete);
-            _bookAuthorPair.RemoveWhere((bookAuthorPair) => bookAuthorPair.Value == id);
+            _bookAuthorPair.RemoveWhere((bookAuthorPair) => bookAuthorPair.Author_Id == id);
         }
 
         /// <summary>
@@ -192,15 +161,15 @@
         /// <exception cref="ArgumentNullException">It is thrown if there is no book with such id.</exception>
         public void DeleteBook(long id)
         {
-            Book bookToDelete = _books.Find((book) => book.Id == id);
+            Book bookToDelete = _books.First((book) => book.Id == id);
             if (bookToDelete == null)
             {
                 throw new ArgumentNullException();
             }
 
             _books.Remove(bookToDelete);
-            _bookAuthorPair.RemoveWhere((bookAuthorPair) => bookAuthorPair.Key == id);
-            _bookGenrePair.RemoveWhere((bookAuthorPair) => bookAuthorPair.Key == id);
+            _bookAuthorPair.RemoveWhere((bookAuthorPair) => bookAuthorPair.Author_Id == id);
+            _bookGenrePair.RemoveWhere((bookGenrePair) => bookGenrePair.Genre_Id == id);
         }
 
         /// <summary>
@@ -217,16 +186,12 @@
                 throw new ArgumentNullException();
             }
 
-            KeyValuePair<long, long> existingBookOfGenre = _bookGenrePair.
-                Where(bookGenrePair => bookGenrePair.Value == id).FirstOrDefault();
-            if (existingBookOfGenre.Equals(default(KeyValuePair<long, long>)))
+            if (_bookGenrePair.Any(bookGenrePair => bookGenrePair.Genre_Id == id))
             {
-                throw new FormatException();
+                throw new FormatException(); //The condition for deleting genre is absence of books of this genre
             }
-            else
-            {
-                _genres.Remove(genreToDelete);
-            }
+
+            _genres.Remove(genreToDelete);
         }
 
         #endregion
@@ -288,7 +253,7 @@
         /// </returns>
         public Author GetAuthor(long id)
         {
-            return _authors.Find((author) => author.Id == id);
+            return _authors.FirstOrDefault((author) => author.Id == id);
         }
 
         /// <summary>
@@ -298,7 +263,7 @@
         /// <returns>The chozen book.</returns>
         public Book GetBook(long id)
         {
-            return _books.Find((book) => book.Id == id);
+            return _books.FirstOrDefault((book) => book.Id == id);
         }
 
         #endregion
@@ -315,7 +280,7 @@
         /// </returns>
         public Author UpdateAuthor(long id, Author author)
         {
-            Author authorToUpdate = _authors.Find((oldauthor) => oldauthor.Id == id);
+            Author authorToUpdate = _authors.First((oldauthor) => oldauthor.Id == id);
             if (authorToUpdate != null)
             {
                 authorToUpdate.Clone(author);
@@ -334,7 +299,7 @@
         /// </returns>
         public Book UpdateBook(long id, Book book)
         {
-            Book bookToUpdate = _books.Find((oldbook) => oldbook.Id == id);
+            Book bookToUpdate = _books.First((oldbook) => oldbook.Id == id);
             if (bookToUpdate != null)
             {
                 bookToUpdate.Clone(book);
@@ -354,11 +319,9 @@
         /// <returns>Enumeration of books.</returns>
         public IEnumerable<Book> GetAuthorBooks(long author_Id)
         {
-            List<KeyValuePair<long, long>> booksOfChozenAuthor = _bookAuthorPair.
-                Where(_bookAuthorPair => _bookAuthorPair.Value == author_Id).ToList();
-            foreach (var bookAuthorPair in booksOfChozenAuthor)
+            foreach (var authorBook in _bookAuthorPair.Where(bookAuthorPair => bookAuthorPair.Author_Id == author_Id))
             {
-                yield return _books.Find((book) => book.Id == bookAuthorPair.Key);
+                yield return _books.First((book) => book.Id == authorBook.Book_Id);
             }
         }
 
@@ -369,11 +332,9 @@
         /// <returns>Enumeration of books.</returns>
         public IEnumerable<Book> GetAllGenreBooks(long genre_Id)
         {
-            List<KeyValuePair<long, long>> booksOfChozenGenre = _bookGenrePair.
-                Where(bookGenrePair => bookGenrePair.Value == genre_Id).ToList();
-            foreach (var bookGenrePair in booksOfChozenGenre)
+            foreach (var genreBook in _bookGenrePair.Where(bookGenrePair => bookGenrePair.Genre_Id == genre_Id))
             {
-                yield return _books.Find((book) => book.Id == bookGenrePair.Key);
+                yield return _books.First((book) => book.Id == genreBook.Book_Id);
             }
         }
 

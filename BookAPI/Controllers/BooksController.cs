@@ -47,6 +47,40 @@
         }
 
         /// <summary>
+        /// Adds the book author.
+        /// </summary>
+        /// <param name="book_id">The book identifier.</param>
+        /// <param name="author_id">The author identifier.</param>
+        /// <returns>HTTP result of operation execution.</returns>
+        [HttpPost("{book_id}/authors/{author_id}")]
+        public IActionResult AddBookAuthor(long book_id, long author_id)
+        {
+            if (_books.AddAuthorOfBook(book_id, author_id))
+            {
+                return Ok("Added author to book");
+            }
+
+            return NotFound("No book or/and author with such ids found!");
+        }
+
+        /// <summary>
+        /// Adds genre to the book.
+        /// </summary>
+        /// <param name="book_id">The book identifier.</param>
+        /// <param name="genre_id">The genre identifier.</param>
+        /// <returns>HTTP result of operation execution.</returns>
+        [HttpPost("{book_id}/genres/{genre_id}")]
+        public IActionResult AddBookGenre(long book_id, long genre_id)
+        {
+            if (_books.AddGenreToBook(book_id, genre_id))
+            {
+                return Ok("Added book genre");
+            }
+
+            return NotFound("No book or/and genre with such ids found!");
+        }
+
+        /// <summary>
         /// Updates the book.
         /// </summary>
         /// <param name="id">The identifier.</param>
@@ -70,29 +104,6 @@
         }
 
         /// <summary>
-        /// Updates the book author
-        /// </summary>
-        /// <param name="book_id">The identifier of a book.</param>
-        /// <param name="author_id">The identifier of a writer.</param>
-        /// <returns>HTTP result of operation execution.</returns>
-        [HttpPut("{book_id}/{author_id}")]
-        public IActionResult UpdateBook(long book_id, long author_id)
-        {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest("Not a valid model");
-            }
-
-            Book updatedBook = _books.UpdateBookAuthor(book_id, author_id);
-            if (updatedBook == null)
-            {
-                return NotFound("No book or author with such id!");
-            }
-
-            return Ok(updatedBook);
-        }
-
-        /// <summary>
         /// Deletes the book.
         /// </summary>
         /// <param name="id">The identifier of a book.</param>
@@ -102,7 +113,7 @@
         {
             if (!ModelState.IsValid)
             {
-                return BadRequest("Not a valid student id");
+                return BadRequest("Not a valid book id");
             }
 
             try
@@ -113,7 +124,7 @@
             {
                 return NotFound("No book with such Id!");
             }
-           
+
             return Ok();
         }
 
