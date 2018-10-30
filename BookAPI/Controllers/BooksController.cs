@@ -17,13 +17,13 @@
         /// <summary>
         /// The interface reference for DI inverse
         /// </summary>
-        private readonly IBookShelf _books;
+        private readonly ILibraryService _books;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="BooksController"/> class.
         /// </summary>
         /// <param name="books">The instance of books.</param>
-        public BooksController(IBookShelf books)
+        public BooksController(ILibraryService books)
         {
             _books = books;
         }
@@ -41,7 +41,7 @@
                 return BadRequest("Invalid book input.");
             }
 
-            _books.Create(book);
+            _books.CreateBook(book);
             return Created("books", book);
         }
 
@@ -59,10 +59,33 @@
                 return BadRequest("Not a valid model");
             }
 
-            Book updatedBook = _books.Update(id, item);
+            Book updatedBook = _books.UpdateBook(id, item);
             if (updatedBook == null)
             {
-                return NotFound();
+                return NotFound("No book with such id!");
+            }
+
+            return Ok(updatedBook);
+        }
+
+        /// <summary>
+        /// Updates the book author
+        /// </summary>
+        /// <param name="book_id">The identifier of a book.</param>
+        /// <param name="author_id">The identifier of a writer.</param>
+        /// <returns>HTTP result of operation execution.</returns>
+        [HttpPut("{book_id}/{author_id}")]
+        public IActionResult UpdateBook(long book_id, long author_id)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest("Not a valid model");
+            }
+
+            Book updatedBook = _books.UpdateBookAuthor(book_id, author_id);
+            if (updatedBook == null)
+            {
+                return NotFound("No book or author with such id!");
             }
 
             return Ok(updatedBook);
@@ -81,7 +104,7 @@
                 return BadRequest("Not a valid student id");
             }
 
-            _books.Delete(id);
+            _books.DeleteBook(id);
             return Ok();
         }
 
@@ -92,10 +115,10 @@
         [HttpGet]
         public IActionResult GetAll()
         {
-            List<Book> booklist = _books.GetAll().ToList();
+            List<Book> booklist = _books.GetAllBooks().ToList();
             if (booklist.Count == 0)
             {
-                return NotFound();
+                return NotFound("Any book are not recorded!");
             }
 
             return Ok(booklist);
@@ -112,7 +135,7 @@
             Book bookToFind = _books.GetBook(id);
             if (bookToFind == null)
             {
-                return NotFound();
+                return NotFound("No book with such id!");
             }
 
             return Ok(bookToFind);

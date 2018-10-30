@@ -19,10 +19,10 @@
         /// <param name="author">The author.</param>
         /// <param name="numberOfPages">The number of pages.</param>
         /// <param name="year">The year.</param>
-        public Book(string title, string author, int numberOfPages, int year)
+        public Book(string title, long? authorid, int numberOfPages, int year)
         {
             this.Title = title;
-            this.Author = author;
+            this.AuthorId = authorid;
             this.NumberOfPages = numberOfPages;
             this.Year = year;
             this.Id = ++_globalCount;
@@ -34,8 +34,8 @@
         /// <value>
         /// The identifier.
         /// </value>
-        [Required]
-        [Range(1, long.MaxValue, ErrorMessage = "Id should be natural number")]
+        [Required(ErrorMessage = "Id is always required!")]
+        [Range(1, long.MaxValue, ErrorMessage = "Id should be natural number!")]
         public long Id { get; set; }
 
         /// <summary>
@@ -44,7 +44,7 @@
         /// <value>
         /// The title.
         /// </value>
-        [Required]
+        [Required(ErrorMessage = "Every book has its own naming!")]
         public string Title { get; set; }
 
         /// <summary>
@@ -53,7 +53,7 @@
         /// <value>
         /// The author.
         /// </value>
-        public string Author { get; set; }
+        public long? AuthorId { get; set; }
 
         /// <summary>
         /// Gets or sets the number of pages.
@@ -72,5 +72,38 @@
         /// </value>
         [Range(-2000, 2018, ErrorMessage = "Wrong year parameter (never heard about books from that time)!")]
         public int Year { get; set; }
+
+        /// <summary>
+        /// Clones the book information.
+        /// </summary>
+        /// <param name="book">The book to clone.</param>
+        public void Clone(Book book)
+        {
+            this.Title = book.Title;
+            this.AuthorId = book.AuthorId;
+            this.NumberOfPages = book.NumberOfPages;
+            this.Year = book.Year;
+        }
+
+        /// <summary>
+        /// Determines whether the specified <see cref="System.Object" />, is equal to this instance.
+        /// </summary>
+        /// <param name="book">The <see cref="Book" /> to compare with this instance.</param>
+        /// <returns>
+        ///   <c>true</c> if the specified <see cref="Book" /> is equal to this instance; otherwise, <c>false</c>.
+        /// </returns>
+        public override bool Equals(object book)
+        {
+            Book newbook = book as Book;
+            if (this.Title == newbook.Title
+             && this.AuthorId == newbook.AuthorId
+             && this.NumberOfPages == newbook.NumberOfPages
+             && this.Year == newbook.Year)
+            {
+                return true;
+            }
+
+            return false;
+        }
     }
 }
